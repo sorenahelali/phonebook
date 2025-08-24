@@ -1,26 +1,20 @@
 #include <algorithm>
 #include <string>
 #include <iostream>
-/*#include <fstream>
 #include <vector>
-#include <cstdio>
-*/
-using namespace std;
+#include <limits>
 
+using namespace std;
 
 struct PersonInfo {
     string name;
     string tellNumber;
-
 };
 
 int selectedOption;
+vector<PersonInfo> phoneBook; // Use vector for flexibility
 
- phoneBook[1000];
-
-int number_of_Add = 0;
-
-
+// Display the menu
 void displayMenu() {
     cout << "Please choose an option:" << endl;
     cout << "1 - Add new phone number" << endl;
@@ -30,37 +24,43 @@ void displayMenu() {
     cout << "5 - Exit" << endl;
 }
 
-
+// Add a new number
 void addNewNumber() {
     string name;
     string cellPhone;
 
     cout << "Please enter your name: ";
-    cin >> name;
+    // Read name with spaces
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    getline(cin, name);
 
     cout << "Please enter your phone number: ";
-    cin >> cellPhone;
+    getline(cin, cellPhone);
 
-    phoneBook[number_of_Add].name = name;
-    phoneBook[number_of_Add].tellNumber = cellPhone;
-
-    number_of_Add++;
+    phoneBook.push_back({name, cellPhone});
 }
 
+// Print all numbers
 void printAll() {
-    for (int i = 0; i < number_of_Add; i++) {
+    if (phoneBook.empty()) {
+        cout << "Phone book is empty." << endl;
+        return;
+    }
+
+    for (size_t i = 0; i < phoneBook.size(); ++i) {
         cout << "Name: " << phoneBook[i].name << " | Tel: " << phoneBook[i].tellNumber << endl;
     }
 }
 
-
+// Search by name
 void searchByName() {
     string search_word;
     cout << "Enter name to search: ";
-    cin >> search_word;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    getline(cin, search_word);
 
     bool found = false;
-    for (int i = 0; i < number_of_Add; i++) {
+    for (size_t i = 0; i < phoneBook.size(); ++i) {
         if (phoneBook[i].name == search_word) {
             cout << "Found: Name: " << phoneBook[i].name << " | number: " << phoneBook[i].tellNumber << endl;
             found = true;
@@ -71,27 +71,26 @@ void searchByName() {
     }
 }
 
+// Search by number
 void searchByNumber() {
-    string search_word_by_number;
+    string search_number;
     cout << "Enter number to search: ";
-    cin >> search_word_by_number;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    getline(cin, search_number);
 
-    bool ali = false;
-    for (int i = 0; i < number_of_Add; i++) {
-        if (phoneBook[i].tellNumber == search_word_by_number) {
+    bool found = false;
+    for (size_t i = 0; i < phoneBook.size(); ++i) {
+        if (phoneBook[i].tellNumber == search_number) {
             cout << "Found: Name: " << phoneBook[i].name << " | number: " << phoneBook[i].tellNumber << endl;
-
-            ali = true;
+            found = true;
         }
     }
-    if (!ali) {
-        cout << "No entries found with this name." << endl;
+    if (!found) {
+        cout << "No entries found with this number." << endl;
     }
 }
-// Function to search by number
 
-
-
+// Optional: clear screen (OS dependent)
 void clearScreen() {
 #ifdef _WIN32
     system("cls");
@@ -101,11 +100,13 @@ void clearScreen() {
 }
 
 int main() {
-
-
     while (true) {
         displayMenu();
-        cin >> selectedOption;
+        if (!(cin >> selectedOption)) {
+            // If input is not a number
+            cout << "Invalid input. Exiting." << endl;
+            break;
+        }
 
         switch (selectedOption) {
             case 1:
@@ -115,7 +116,7 @@ int main() {
                 searchByName();
                 break;
             case 3:
-                 searchByNumber();
+                searchByNumber();
                 break;
             case 4:
                 printAll();
@@ -125,7 +126,11 @@ int main() {
             default:
                 cout << "Invalid option. Please try again." << endl;
         }
-        system("pause");
-        system("cls");
+
+        // Optional pause/clear
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        // Uncomment if you want to use them
+        // system("pause");
+        // clearScreen();
     }
 }
